@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kakerlaken Poker Online</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div id="screen-home" class="screen">
+  <div class="card panel">
+    <h1>🪳 Kakerlaken Poker</h1>
+    <p class="subtitle">เกมโกหกจับผิด 2–6 คน เล่นผ่านเน็ต</p>
+
+    <label>ชื่อผู้เล่น</label>
+    <input id="nameInput" maxlength="20" placeholder="ใส่ชื่อของคุณ" />
+
+    <div class="row">
+      <button id="btnCreate" class="primary">สร้างห้องใหม่</button>
+    </div>
+
+    <div class="divider">หรือ</div>
+
+    <label>รหัสห้อง</label>
+    <div class="row">
+      <input id="codeInput" maxlength="4" placeholder="ABCD" style="text-transform:uppercase" />
+      <button id="btnJoin">เข้าร่วมห้อง</button>
+    </div>
+    <p id="homeError" class="error"></p>
+  </div>
+</div>
+
+<div id="screen-lobby" class="screen hidden">
+  <div class="card panel">
+    <h2>ห้อง <span id="lobbyCode"></span></h2>
+    <p class="subtitle">ส่งรหัสห้องนี้ให้เพื่อนเพื่อเข้าร่วม</p>
+    <ul id="lobbyPlayers" class="player-list"></ul>
+    <button id="btnStart" class="primary">เริ่มเกม</button>
+    <p id="lobbyHint" class="hint"></p>
+  </div>
+</div>
+
+<div id="screen-game" class="screen hidden">
+  <div class="topbar">
+    <div id="turnBanner" class="banner"></div>
+    <div id="pendingBanner" class="banner pending hidden"></div>
+  </div>
+
+  <div id="opponents" class="opponents"></div>
+
+  <div id="actionPanel" class="panel action-panel hidden"></div>
+
+  <div class="hand-area">
+    <h3>ไพ่ในมือ (<span id="handCount">0</span>)</h3>
+    <div id="hand" class="hand"></div>
+  </div>
+
+  <details class="log-area">
+    <summary>บันทึกเกม</summary>
+    <div id="log"></div>
+  </details>
+</div>
+
+<div id="screen-end" class="screen hidden">
+  <div class="card panel">
+    <h2>จบเกม</h2>
+    <p id="endMessage"></p>
+    <button id="btnRestart" class="primary">เล่นใหม่</button>
+    <p id="endHint" class="hint"></p>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="client.js"></script>
+</body>
+</html>
