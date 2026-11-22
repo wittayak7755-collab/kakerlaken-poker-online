@@ -15,6 +15,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 const ANIMALS = [
   'cockroach', 'fly', 'rat', 'bat', 'frog', 'scorpion', 'spider', 'stinkbug'
 ];
+const ANIMAL_TH = {
+  cockroach: 'แมลงสาบ', fly: 'แมลงวัน', rat: 'หนู', bat: 'ค้างคาว',
+  frog: 'กบ', scorpion: 'แมงป่อง', spider: 'แมงมุม', stinkbug: 'แมลงแคง'
+};
 const COPIES_PER_ANIMAL = 8;
 const MAX_FACEUP_BEFORE_LOSS = 4;
 const MIN_PLAYERS = 2;
@@ -80,7 +84,7 @@ class Room {
     this.pending = null;
     this.log = [];
     this.winnerMessage = null;
-    this.addLog(`game started — ${this.players.length} players, ${this.players.reduce((a, p) => a + p.hand.length, 0)} cards dealt`);
+    this.addLog(`เริ่มเกมแล้ว — ผู้เล่น ${this.players.length} คน แจกไพ่ไปทั้งหมด ${this.players.reduce((a, p) => a + p.hand.length, 0)} ใบ`);
   }
 
   // current turn player picks a card from own hand and sends face down to target, with a claim
@@ -104,7 +108,7 @@ class Room {
       holderId: targetId,       // who currently holds it and must decide
       chain: [fromId, targetId] // everyone who has touched this card, can't boomerang back
     };
-    this.addLog(`${from.name} passes a card face down to ${target.name}`);
+    this.addLog(`${from.name} ส่งไพ่คว่ำหน้าให้ ${target.name} พร้อมอ้างว่าเป็น${ANIMAL_TH[claimedAnimal]}`);
     return { ok: true };
   }
 
@@ -122,7 +126,7 @@ class Room {
     p.claimedAnimal = newClaimedAnimal;
     p.holderId = nextTargetId;
     p.chain.push(nextTargetId);
-    this.addLog(`${this.player(holderId).name} looks, then passes it on to ${nextTarget.name}`);
+    this.addLog(`${this.player(holderId).name} แอบดูไพ่ แล้วส่งต่อให้ ${nextTarget.name} พร้อมอ้างใหม่ว่าเป็น${ANIMAL_TH[newClaimedAnimal]}`);
     return { ok: true };
   }
 
@@ -143,10 +147,10 @@ class Room {
     loser.faceUp[p.actualAnimal] = (loser.faceUp[p.actualAnimal] || 0) + 1;
 
     this.addLog(
-      `${guesser.name} calls it "${guessTruth ? 'true' : 'lie'}" — ` +
-      `it was actually ${p.actualAnimal} (claimed ${p.claimedAnimal}). ` +
-      `${guesser.name} guessed ${guessedCorrectly ? 'correctly' : 'wrong'} — ` +
-      `${loser.name} takes it face up.`
+      `${guesser.name} ทายว่า "${guessTruth ? 'เชื่อ' : 'ตอแหล'}" — ` +
+      `ของจริงคือ${ANIMAL_TH[p.actualAnimal]} (อ้างว่าเป็น${ANIMAL_TH[p.claimedAnimal]}) ` +
+      `${guesser.name} ทาย${guessedCorrectly ? 'ถูก' : 'ผิด'} — ` +
+      `${loser.name} ต้องเก็บไพ่ไปวางหงายหน้า`
     );
 
     const revealed = { actualAnimal: p.actualAnimal, claimedAnimal: p.claimedAnimal, loserId: loser.id, loserName: loser.name, guesserId: guesser.id, guessedCorrectly };
@@ -154,7 +158,7 @@ class Room {
 
     // loss check: 4 face-up of same animal
     if (loser.faceUp[p.actualAnimal] >= MAX_FACEUP_BEFORE_LOSS) {
-      this.endGame(`${loser.name} collected 4 ${p.actualAnimal} face up and loses!`);
+      this.endGame(`${loser.name} สะสม${ANIMAL_TH[p.actualAnimal]}หงายหน้าครบ 4 ใบ — แพ้!`);
       return { ok: true, revealed, gameOver: true };
     }
 
@@ -169,7 +173,7 @@ class Room {
     if (this.phase !== 'playing') return;
     const cur = this.currentPlayer();
     if (cur && cur.hand.length === 0) {
-      this.endGame(`${cur.name} has no cards left on their turn and loses!`);
+      this.endGame(`${cur.name} ไพ่หมดมือตอนถึงตาตัวเอง — แพ้!`);
     }
   }
 
