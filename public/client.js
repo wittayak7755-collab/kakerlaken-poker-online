@@ -137,7 +137,7 @@ function renderPlayAction(state, me) {
     <h4>เลือกไพ่จากมือ แล้วส่งให้ใครสักคน พร้อมประกาศว่าเป็นสัตว์อะไร</h4>
     <div>เป้าหมาย:</div>
     <div class="target-grid">${others.map(p => `<button class="target-btn" data-id="${p.id}">${escapeHtml(p.name)}</button>`).join('')}</div>
-    <div>ประกาศว่าเป็น (จะจริงหรือโกหกก็ได้):</div>
+    <div>ประกาศว่าเป็น (จะพูดจริงหรือตอแหลก็ได้):</div>
     <div class="animal-grid">${ANIMALS.map(a => `<button class="animal-btn" data-animal="${a}"><span class="emoji">${ANIMAL_EMOJI[a]}</span>${ANIMAL_LABEL_TH[a]}</button>`).join('')}</div>
     <button id="confirmPlay" class="primary" disabled>ส่งไพ่</button>
   `;
@@ -158,8 +158,8 @@ function renderHolderAction(state, pending) {
   ap.innerHTML = `
     <h4>คุณถือไพ่ใบนี้อยู่ — ทายว่าจริงหรือโกหก หรือแอบดูแล้วส่งต่อ</h4>
     <div class="guess-row">
-      <button class="true-btn" id="guessTrue">✅ เชื่อว่าจริง</button>
-      <button class="lie-btn" id="guessLie">❌ เชื่อว่าโกหก</button>
+      <button class="true-btn" id="guessTrue">✅ เชื่อ</button>
+      <button class="lie-btn" id="guessLie">🤥 ตอแหล</button>
     </div>
     ${others.length ? `
       <div style="margin-top:16px">หรือแอบดูไพ่แล้วส่งต่อ (ห้ามส่งกลับคนที่เคยส่งมา):</div>
@@ -208,7 +208,10 @@ function renderHand(state, me, myTurn) {
   me.hand.forEach((animal, idx) => {
     const d = document.createElement('div');
     d.className = 'hand-card' + (!canSelect ? ' disabled' : '') + (selectedCardIndex === idx ? ' selected' : '');
-    d.innerHTML = `<span class="emoji">${ANIMAL_EMOJI[animal]}</span><span>${ANIMAL_LABEL_TH[animal]}</span>`;
+    d.innerHTML = `<span class="corner tl">${ANIMAL_EMOJI[animal]}</span>
+      <span class="emoji">${ANIMAL_EMOJI[animal]}</span>
+      <span class="label">${ANIMAL_LABEL_TH[animal]}</span>
+      <span class="corner br">${ANIMAL_EMOJI[animal]}</span>`;
     if (canSelect) {
       d.onclick = () => {
         selectedCardIndex = idx;
